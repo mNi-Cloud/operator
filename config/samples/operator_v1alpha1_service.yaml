@@ -1,0 +1,10 @@
+apiVersion: operator.mnicloud.jp/v1alpha1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/managed-by: kustomize
+  name: test
+spec:
+  image: nginx:latest
+  appVersion: 1.0.0
