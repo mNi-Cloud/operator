@@ -36,6 +36,11 @@ type ComponentStatus struct {
 	Conditions []metav1.Condition `json:"conditions,omitempty"`
 }
 
+const (
+	TypeComponentAvailable = "Available"
+	TypeComponentDegraded  = "Degraded"
+)
+
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,singular="mnicomponent",shortName={"mnicomp"}

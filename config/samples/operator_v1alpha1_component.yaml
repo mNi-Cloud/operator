@@ -4,6 +4,6 @@ metadata:
   labels:
     app.kubernetes.io/name: operator
     app.kubernetes.io/managed-by: kustomize
-  name: component-sample
+  name: cert-manager
 spec:
-  # TODO(user): Add fields here
+  appVersion: v1.15.3
