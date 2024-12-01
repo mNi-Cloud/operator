@@ -1,0 +1,7 @@
+resources:
+  - namespace.yaml
+  - deploy.yaml
+  - svc.yaml
+  - rbac-policy-cm.yaml
+
+namespace: opa

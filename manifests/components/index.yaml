@@ -1,0 +1,10 @@
+cert-manager:
+  - v1.15.3
+contour:
+  - v19.0.2
+cdi:
+  - v1.59.0
+kubevirt:
+  - v1.4.0
+opa:
+  - v0.67.1

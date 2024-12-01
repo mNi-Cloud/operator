@@ -1,0 +1,11 @@
+helmCharts:
+  - name: contour
+    repo: https://charts.bitnami.com/bitnami
+    version: 19.0.2
+    releaseName: contour
+    namespace: contour
+    includeCRDs: true
+    valuesInline: {}
+
+resources:
+  - namespace.yaml

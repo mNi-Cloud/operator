@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: opa
+---
+apiVersion: v1
+data:
+  rbac.rego: "package rbac\nimport rego.v1\ndefault allow := false\nallow if {\n\tevery
+    r in input.requests{\n\t\trequest_allowed(r)\n\t}\n}\nrequest_allowed(r) if {\n\tsome
+    role_data in input.roles\n\n\tallow_action(role_data, r)\n\tnot deny_action(role_data,
+    r)\n}\ndeny_action(role_data, r) if {\n\tsome d in role_data.deny\n    match_resource(d.resource,
+    r.resource)\n\tmatch_verb(d.verb, r.verb)\n}\nallow_action(role_data, r) if {\n\tsome
+    a in role_data.allow\n\tmatch_resource(a.resource, r.resource)\n\tmatch_verb(a.verb,
+    r.verb)\n}\nmatch_resource(rule, value) if {\n\trule == value\n}\nmatch_resource(rule,
+    _) if {\n\trule == \"*\"\n}\nmatch_verb(rule, value) if {\n\tvalue in rule\n}\nmatch_verb(rule,
+    _) if {\n\t\"*\" in rule\n}\n"
+kind: ConfigMap
+metadata:
+  name: rbac-policy
+  namespace: opa
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: opa
+  name: opa
+  namespace: opa
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8181
+  selector:
+    app: opa
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: opa
+  name: opa
+  namespace: opa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opa
+  template:
+    metadata:
+      labels:
+        app: opa
+    spec:
+      containers:
+      - args:
+        - run
+        - --server
+        - /rbac.rego
+        - --addr
+        - :8181
+        image: openpolicyagent/opa:0.67.1
+        imagePullPolicy: IfNotPresent
+        name: opa
+        ports:
+        - containerPort: 8181
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /rbac.rego
+          name: rbac-policy
+          subPath: rbac.rego
+      volumes:
+      - configMap:
+          name: rbac-policy
+        name: rbac-policy

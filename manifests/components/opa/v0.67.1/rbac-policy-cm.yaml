@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rbac-policy
+data:
+  rbac.rego: |
+    package rbac
+    import rego.v1
+    default allow := false
+    allow if {
+    	every r in input.requests{
+    		request_allowed(r)
+    	}
+    }
+    request_allowed(r) if {
+    	some role_data in input.roles
+    
+    	allow_action(role_data, r)
+    	not deny_action(role_data, r)
+    }
+    deny_action(role_data, r) if {
+    	some d in role_data.deny
+        match_resource(d.resource, r.resource)
+    	match_verb(d.verb, r.verb)
+    }
+    allow_action(role_data, r) if {
+    	some a in role_data.allow
+    	match_resource(a.resource, r.resource)
+    	match_verb(a.verb, r.verb)
+    }
+    match_resource(rule, value) if {
+    	rule == value
+    }
+    match_resource(rule, _) if {
+    	rule == "*"
+    }
+    match_verb(rule, value) if {
+    	value in rule
+    }
+    match_verb(rule, _) if {
+    	"*" in rule
+    }
+

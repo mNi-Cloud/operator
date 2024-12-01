@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: opa
+  name: opa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opa
+  template:
+    metadata:
+      labels:
+        app: opa
+    spec:
+      containers:
+        - image: openpolicyagent/opa:0.67.1
+          imagePullPolicy: IfNotPresent
+          name: opa
+          ports:
+            - containerPort: 8181
+              protocol: TCP
+          args:
+            - run
+            - --server
+            - /rbac.rego
+            - --addr
+            - :8181
+          volumeMounts:
+            - mountPath: /rbac.rego
+              subPath: rbac.rego
+              name: "rbac-policy"
+      volumes:
+        - name: rbac-policy
+          configMap:
+            name: rbac-policy
