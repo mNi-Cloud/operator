@@ -31,7 +31,7 @@ import (
 // ServicesGetter has a method to return a ServiceInterface.
 // A group's client should implement this interface.
 type ServicesGetter interface {
-	Services(namespace string) ServiceInterface
+	Services() ServiceInterface
 }
 
 // ServiceInterface has methods to work with Service resources.
@@ -55,13 +55,13 @@ type services struct {
 }
 
 // newServices returns a Services
-func newServices(c *ApiV1alpha1Client, namespace string) *services {
+func newServices(c *ApiV1alpha1Client) *services {
 	return &services{
 		gentype.NewClientWithList[*v1alpha1.Service, *v1alpha1.ServiceList](
 			"services",
 			c.RESTClient(),
 			scheme.ParameterCodec,
-			namespace,
+			"",
 			func() *v1alpha1.Service { return &v1alpha1.Service{} },
 			func() *v1alpha1.ServiceList { return &v1alpha1.ServiceList{} }),
 	}

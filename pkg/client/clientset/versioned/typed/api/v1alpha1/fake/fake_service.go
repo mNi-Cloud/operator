@@ -31,7 +31,6 @@ import (
 // FakeServices implements ServiceInterface
 type FakeServices struct {
 	Fake *FakeApiV1alpha1
-	ns   string
 }
 
 var servicesResource = v1alpha1.SchemeGroupVersion.WithResource("services")
@@ -42,8 +41,7 @@ var servicesKind = v1alpha1.SchemeGroupVersion.WithKind("Service")
 func (c *FakeServices) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Service, err error) {
 	emptyResult := &v1alpha1.Service{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(servicesResource, c.ns, name, options), emptyResult)
-
+		Invokes(testing.NewRootGetActionWithOptions(servicesResource, name, options), emptyResult)
 	if obj == nil {
 		return emptyResult, err
 	}
@@ -54,8 +52,7 @@ func (c *FakeServices) Get(ctx context.Context, name string, options v1.GetOptio
 func (c *FakeServices) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.ServiceList, err error) {
 	emptyResult := &v1alpha1.ServiceList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(servicesResource, servicesKind, c.ns, opts), emptyResult)
-
+		Invokes(testing.NewRootListActionWithOptions(servicesResource, servicesKind, opts), emptyResult)
 	if obj == nil {
 		return emptyResult, err
 	}
@@ -76,16 +73,14 @@ func (c *FakeServices) List(ctx context.Context, opts v1.ListOptions) (result *v
 // Watch returns a watch.Interface that watches the requested services.
 func (c *FakeServices) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(servicesResource, c.ns, opts))
-
+		InvokesWatch(testing.NewRootWatchActionWithOptions(servicesResource, opts))
 }
 
 // Create takes the representation of a service and creates it.  Returns the server's representation of the service, and an error, if there is any.
 func (c *FakeServices) Create(ctx context.Context, service *v1alpha1.Service, opts v1.CreateOptions) (result *v1alpha1.Service, err error) {
 	emptyResult := &v1alpha1.Service{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(servicesResource, c.ns, service, opts), emptyResult)
-
+		Invokes(testing.NewRootCreateActionWithOptions(servicesResource, service, opts), emptyResult)
 	if obj == nil {
 		return emptyResult, err
 	}
@@ -96,8 +91,7 @@ func (c *FakeServices) Create(ctx context.Context, service *v1alpha1.Service, op
 func (c *FakeServices) Update(ctx context.Context, service *v1alpha1.Service, opts v1.UpdateOptions) (result *v1alpha1.Service, err error) {
 	emptyResult := &v1alpha1.Service{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(servicesResource, c.ns, service, opts), emptyResult)
-
+		Invokes(testing.NewRootUpdateActionWithOptions(servicesResource, service, opts), emptyResult)
 	if obj == nil {
 		return emptyResult, err
 	}
@@ -109,8 +103,7 @@ func (c *FakeServices) Update(ctx context.Context, service *v1alpha1.Service, op
 func (c *FakeServices) UpdateStatus(ctx context.Context, service *v1alpha1.Service, opts v1.UpdateOptions) (result *v1alpha1.Service, err error) {
 	emptyResult := &v1alpha1.Service{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(servicesResource, "status", c.ns, service, opts), emptyResult)
-
+		Invokes(testing.NewRootUpdateSubresourceActionWithOptions(servicesResource, "status", service, opts), emptyResult)
 	if obj == nil {
 		return emptyResult, err
 	}
@@ -120,14 +113,13 @@ func (c *FakeServices) UpdateStatus(ctx context.Context, service *v1alpha1.Servi
 // Delete takes name of the service and deletes it. Returns an error if one occurs.
 func (c *FakeServices) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(servicesResource, c.ns, name, opts), &v1alpha1.Service{})
-
+		Invokes(testing.NewRootDeleteActionWithOptions(servicesResource, name, opts), &v1alpha1.Service{})
 	return err
 }
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeServices) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(servicesResource, c.ns, opts, listOpts)
+	action := testing.NewRootDeleteCollectionActionWithOptions(servicesResource, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.ServiceList{})
 	return err
@@ -137,8 +129,7 @@ func (c *FakeServices) DeleteCollection(ctx context.Context, opts v1.DeleteOptio
 func (c *FakeServices) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Service, err error) {
 	emptyResult := &v1alpha1.Service{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(servicesResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
+		Invokes(testing.NewRootPatchSubresourceActionWithOptions(servicesResource, name, pt, data, opts, subresources...), emptyResult)
 	if obj == nil {
 		return emptyResult, err
 	}

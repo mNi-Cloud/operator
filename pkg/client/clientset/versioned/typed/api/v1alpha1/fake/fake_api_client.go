@@ -27,12 +27,12 @@ type FakeApiV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeApiV1alpha1) Components(namespace string) v1alpha1.ComponentInterface {
-	return &FakeComponents{c, namespace}
+func (c *FakeApiV1alpha1) Components() v1alpha1.ComponentInterface {
+	return &FakeComponents{c}
 }
 
-func (c *FakeApiV1alpha1) Services(namespace string) v1alpha1.ServiceInterface {
-	return &FakeServices{c, namespace}
+func (c *FakeApiV1alpha1) Services() v1alpha1.ServiceInterface {
+	return &FakeServices{c}
 }
 
 // RESTClient returns a RESTClient that is used to communicate

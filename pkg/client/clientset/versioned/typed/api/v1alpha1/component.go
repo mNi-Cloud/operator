@@ -31,7 +31,7 @@ import (
 // ComponentsGetter has a method to return a ComponentInterface.
 // A group's client should implement this interface.
 type ComponentsGetter interface {
-	Components(namespace string) ComponentInterface
+	Components() ComponentInterface
 }
 
 // ComponentInterface has methods to work with Component resources.
@@ -55,13 +55,13 @@ type components struct {
 }
 
 // newComponents returns a Components
-func newComponents(c *ApiV1alpha1Client, namespace string) *components {
+func newComponents(c *ApiV1alpha1Client) *components {
 	return &components{
 		gentype.NewClientWithList[*v1alpha1.Component, *v1alpha1.ComponentList](
 			"components",
 			c.RESTClient(),
 			scheme.ParameterCodec,
-			namespace,
+			"",
 			func() *v1alpha1.Component { return &v1alpha1.Component{} },
 			func() *v1alpha1.ComponentList { return &v1alpha1.ComponentList{} }),
 	}

@@ -36,12 +36,12 @@ type ApiV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-func (c *ApiV1alpha1Client) Components(namespace string) ComponentInterface {
-	return newComponents(c, namespace)
+func (c *ApiV1alpha1Client) Components() ComponentInterface {
+	return newComponents(c)
 }
 
-func (c *ApiV1alpha1Client) Services(namespace string) ServiceInterface {
-	return newServices(c, namespace)
+func (c *ApiV1alpha1Client) Services() ServiceInterface {
+	return newServices(c)
 }
 
 // NewForConfig creates a new ApiV1alpha1Client for the given config.

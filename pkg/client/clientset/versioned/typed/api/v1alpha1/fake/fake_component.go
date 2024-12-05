@@ -31,7 +31,6 @@ import (
 // FakeComponents implements ComponentInterface
 type FakeComponents struct {
 	Fake *FakeApiV1alpha1
-	ns   string
 }
 
 var componentsResource = v1alpha1.SchemeGroupVersion.WithResource("components")
@@ -42,8 +41,7 @@ var componentsKind = v1alpha1.SchemeGroupVersion.WithKind("Component")
 func (c *FakeComponents) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Component, err error) {
 	emptyResult := &v1alpha1.Component{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(componentsResource, c.ns, name, options), emptyResult)
-
+		Invokes(testing.NewRootGetActionWithOptions(componentsResource, name, options), emptyResult)
 	if obj == nil {
 		return emptyResult, err
 	}
@@ -54,8 +52,7 @@ func (c *FakeComponents) Get(ctx context.Context, name string, options v1.GetOpt
 func (c *FakeComponents) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.ComponentList, err error) {
 	emptyResult := &v1alpha1.ComponentList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(componentsResource, componentsKind, c.ns, opts), emptyResult)
-
+		Invokes(testing.NewRootListActionWithOptions(componentsResource, componentsKind, opts), emptyResult)
 	if obj == nil {
 		return emptyResult, err
 	}
@@ -76,16 +73,14 @@ func (c *FakeComponents) List(ctx context.Context, opts v1.ListOptions) (result 
 // Watch returns a watch.Interface that watches the requested components.
 func (c *FakeComponents) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(componentsResource, c.ns, opts))
-
+		InvokesWatch(testing.NewRootWatchActionWithOptions(componentsResource, opts))
 }
 
 // Create takes the representation of a component and creates it.  Returns the server's representation of the component, and an error, if there is any.
 func (c *FakeComponents) Create(ctx context.Context, component *v1alpha1.Component, opts v1.CreateOptions) (result *v1alpha1.Component, err error) {
 	emptyResult := &v1alpha1.Component{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(componentsResource, c.ns, component, opts), emptyResult)
-
+		Invokes(testing.NewRootCreateActionWithOptions(componentsResource, component, opts), emptyResult)
 	if obj == nil {
 		return emptyResult, err
 	}
@@ -96,8 +91,7 @@ func (c *FakeComponents) Create(ctx context.Context, component *v1alpha1.Compone
 func (c *FakeComponents) Update(ctx context.Context, component *v1alpha1.Component, opts v1.UpdateOptions) (result *v1alpha1.Component, err error) {
 	emptyResult := &v1alpha1.Component{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(componentsResource, c.ns, component, opts), emptyResult)
-
+		Invokes(testing.NewRootUpdateActionWithOptions(componentsResource, component, opts), emptyResult)
 	if obj == nil {
 		return emptyResult, err
 	}
@@ -109,8 +103,7 @@ func (c *FakeComponents) Update(ctx context.Context, component *v1alpha1.Compone
 func (c *FakeComponents) UpdateStatus(ctx context.Context, component *v1alpha1.Component, opts v1.UpdateOptions) (result *v1alpha1.Component, err error) {
 	emptyResult := &v1alpha1.Component{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(componentsResource, "status", c.ns, component, opts), emptyResult)
-
+		Invokes(testing.NewRootUpdateSubresourceActionWithOptions(componentsResource, "status", component, opts), emptyResult)
 	if obj == nil {
 		return emptyResult, err
 	}
@@ -120,14 +113,13 @@ func (c *FakeComponents) UpdateStatus(ctx context.Context, component *v1alpha1.C
 // Delete takes name of the component and deletes it. Returns an error if one occurs.
 func (c *FakeComponents) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(componentsResource, c.ns, name, opts), &v1alpha1.Component{})
-
+		Invokes(testing.NewRootDeleteActionWithOptions(componentsResource, name, opts), &v1alpha1.Component{})
 	return err
 }
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeComponents) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(componentsResource, c.ns, opts, listOpts)
+	action := testing.NewRootDeleteCollectionActionWithOptions(componentsResource, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.ComponentList{})
 	return err
@@ -137,8 +129,7 @@ func (c *FakeComponents) DeleteCollection(ctx context.Context, opts v1.DeleteOpt
 func (c *FakeComponents) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Component, err error) {
 	emptyResult := &v1alpha1.Component{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(componentsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
+		Invokes(testing.NewRootPatchSubresourceActionWithOptions(componentsResource, name, pt, data, opts, subresources...), emptyResult)
 	if obj == nil {
 		return emptyResult, err
 	}
