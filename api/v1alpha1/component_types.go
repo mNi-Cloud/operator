@@ -41,6 +41,7 @@ const (
 	TypeComponentDegraded  = "Degraded"
 )
 
+//+genclient
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,singular="mnicomponent",shortName={"mnicomp"}

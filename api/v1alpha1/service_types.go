@@ -62,6 +62,7 @@ type ServiceEndpoint struct {
 	External string `json:"external"`
 }
 
+//+genclient
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,singular="mniservice",shortName={"mnisvc"}
