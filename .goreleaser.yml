@@ -22,8 +22,6 @@ dockers:
     dockerfile: ./Dockerfile
     ids:
       - operator
-    extra_files:
-      - LICENSE
     build_flag_templates:
       - "--platform=linux/amd64"
       - "--label=org.opencontainers.image.created={{.Date}}"
@@ -35,8 +33,6 @@ dockers:
     dockerfile: ./Dockerfile
     ids:
       - operator
-    extra_files:
-      - LICENSE
     build_flag_templates:
       - "--platform=linux/arm64"
       - "--label=org.opencontainers.image.created={{.Date}}"
