@@ -1,0 +1,53 @@
+project_name: operator
+dist: bin/
+release:
+  skip_upload: true
+builds:
+  - id: operator
+    env:
+      - CGO_ENABLED=0
+    main: ./cmd
+    binary: operator
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -X github.com/mni-cloud/operator.Version={{.Version}}
+dockers:
+  - image_templates:
+      - "ghcr.io/mni-cloud/operator:{{ .Version }}-amd64"
+    use: buildx
+    dockerfile: ./Dockerfile
+    ids:
+      - operator
+    extra_files:
+      - LICENSE
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+  - image_templates:
+      - "ghcr.io/mni-cloud/operator:{{ .Version }}-arm64"
+    use: buildx
+    dockerfile: ./Dockerfile
+    ids:
+      - operator
+    extra_files:
+      - LICENSE
+    build_flag_templates:
+      - "--platform=linux/arm64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+docker_manifests:
+  - name_template: "ghcr.io/mni-cloud/operator:{{ .Version }}"
+    image_templates:
+      - "ghcr.io/mni-cloud/operator:{{ .Version }}-amd64"
+      - "ghcr.io/mni-cloud/operator:{{ .Version }}-arm64"
+  - name_template: "ghcr.io/mni-cloud/operator:{{ .Major }}.{{ .Minor }}"
+    image_templates:
+      - "ghcr.io/mni-cloud/operator:{{ .Version }}-amd64"
+      - "ghcr.io/mni-cloud/operator:{{ .Version }}-arm64"
