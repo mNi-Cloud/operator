@@ -3,10 +3,6 @@ on:
   push:
     tags:
       - 'v*'
-
-permissions:
-  packages: write
-
 jobs:
   release:
     runs-on: ubuntu-20.04
