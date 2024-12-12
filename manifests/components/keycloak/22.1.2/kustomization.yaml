@@ -1,0 +1,43 @@
+helmCharts:
+  - name: keycloak
+    repo: https://charts.bitnami.com/bitnami
+    version: 22.1.2
+    releaseName: keycloak
+    namespace: keycloak
+    includeCRDs: true
+    valuesInline:
+      proxy: "edge"
+      proxyHeaders: "xforwarded"
+      production: true
+      readinessProbe:
+        periodSeconds: 15
+        failureThreshold: 10
+      image:
+        registry: ghcr.io
+        repository: mni-cloud/keycloak
+        tag: latest
+      auth:
+        adminUser: admin
+        adminPassword: admin
+      postgresql:
+        auth:
+          username: "bn_keycloak"
+          password: "r4d7B12XiyI="
+          postgresPassword: "DYUB3Dl+W9o="
+      extraEnvVars:
+        - name: KC_SPI_EVENTS_LISTENER_MNI_REGISTRATION_HOOK_IDENTITY_PROVIDER
+          value: "identityProvider.replacethis"
+        - name: KC_SPI_EVENTS_LISTENER_MNI_REGISTRATION_HOOK_MNI_AUTH_ENDPOINT
+          value: "http://mni-auth.mni-cloud.svc/api/v1alpha1"
+        - name: KC_SPI_EVENTS_LISTENER_MNI_REGISTRATION_HOOK_IDP_ENDPOINT
+          value: "http://keycloak-headless:8080/realms/cloud"
+        - name: KC_SPI_EVENTS_LISTENER_MNI_REGISTRATION_HOOK_USERNAME
+          value: "serviceUsername.replacethis"
+        - name: KC_SPI_EVENTS_LISTENER_MNI_REGISTRATION_HOOK_PASSWORD
+          value: "servicePassword.replacethis"
+
+resources:
+  - namespace.yaml
+  - ingress.yaml
+
+namespace: keycloak
