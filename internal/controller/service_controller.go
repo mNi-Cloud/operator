@@ -415,7 +415,7 @@ func (r *ServiceReconciler) updateStatus(ctx context.Context, svc operatorv1alph
 		})
 		result = ctrl.Result{Requeue: true}
 	} else {
-		svc.Status.Endpoints.Internal = "http://" + svc.Name + "." + r.Config.Namespace + ".svc"
+		svc.Status.Endpoints.Internal = "http://" + svc.Name + "." + r.Config.Namespace + ".svc/api"
 	}
 
 	if svc.Spec.External == operatorv1alpha1.ExternalLoadBalancer {
@@ -427,7 +427,7 @@ func (r *ServiceReconciler) updateStatus(ctx context.Context, svc operatorv1alph
 				Message: "LoadBalancerIP is not assigned",
 			})
 		} else {
-			svc.Status.Endpoints.External = "http://" + service.Status.LoadBalancer.Ingress[0].IP
+			svc.Status.Endpoints.External = "http://" + service.Status.LoadBalancer.Ingress[0].IP + "/api"
 		}
 	} else if svc.Spec.External == operatorv1alpha1.ExternalIngress {
 		var ingress networkingv1.Ingress
