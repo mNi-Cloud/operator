@@ -50,6 +50,10 @@ spec:
             properties:
               appVersion:
                 type: string
+              parameters:
+                additionalProperties:
+                  type: string
+                type: object
             required:
             - appVersion
             type: object

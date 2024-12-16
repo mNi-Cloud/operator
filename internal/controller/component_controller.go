@@ -157,6 +157,8 @@ func (r *ComponentReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 				continue
 			}
 
+			r.replaceStrings(obj.Object, component.Spec.Parameters)
+
 			err = ctrl.SetControllerReference(&component, obj, r.Scheme)
 			if err != nil {
 				logger.Error(err, "unable to set controller reference", "name", component.Name, "manifest-kind", obj.GroupVersionKind().String(), "manifest", obj.GetName())
@@ -188,6 +190,29 @@ func (r *ComponentReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 
 	err = r.Status().Update(ctx, &component)
 	return result, err
+}
+
+func (r *ComponentReconciler) replaceStrings(data map[string]interface{}, replacements map[string]string) {
+	for key, value := range data {
+		switch v := value.(type) {
+		case string:
+			if newValue, exists := replacements[v]; exists {
+				data[key] = newValue
+			}
+		case map[string]interface{}:
+			r.replaceStrings(v, replacements)
+		case []interface{}:
+			for i, elem := range v {
+				if str, ok := elem.(string); ok {
+					if newValue, exists := replacements[str]; exists {
+						v[i] = newValue
+					}
+				} else if nestedMap, ok := elem.(map[string]interface{}); ok {
+					r.replaceStrings(nestedMap, replacements)
+				}
+			}
+		}
+	}
 }
 
 func (r *ComponentReconciler) requestIndex(ctx context.Context, httpClient *http.Client) (map[string][]string, error) {

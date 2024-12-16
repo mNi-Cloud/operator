@@ -25,7 +25,8 @@ import (
 
 // ComponentSpec defines the desired state of Component.
 type ComponentSpec struct {
-	AppVersion string `json:"appVersion"`
+	AppVersion string            `json:"appVersion"`
+	Parameters map[string]string `json:"parameters,omitempty"`
 }
 
 // ComponentStatus defines the observed state of Component.
