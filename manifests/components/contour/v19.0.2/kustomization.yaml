@@ -5,7 +5,12 @@ helmCharts:
     releaseName: contour
     namespace: contour
     includeCRDs: true
-    valuesInline: {}
+    valuesInline:
+      envoy:
+        service:
+          annotations:
+            lb-svc-attachment.kube-system.kubernetes.io/logical_switch: ovn-vpc-external-network
+            ovn.kubernetes.io/attachmentprovider: ovn-vpc-external-network.kube-system
 
 resources:
   - namespace.yaml
