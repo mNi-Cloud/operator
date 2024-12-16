@@ -305,7 +305,7 @@ func (r *ServiceReconciler) reconcileIngress(ctx context.Context, svc operatorv1
 				).
 				WithTLS(networkingv1apply.IngressTLS().
 					WithHosts("api." + r.Config.CustomDomain).
-					WithSecretName(svc.Name + "-tls"),
+					WithSecretName("api-tls"),
 				),
 		)
 
