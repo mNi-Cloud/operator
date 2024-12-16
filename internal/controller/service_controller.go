@@ -18,9 +18,11 @@ package controller
 
 import (
 	"context"
+
 	"github.com/mNi-Cloud/operator/internal/config"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	networkingv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -31,6 +33,7 @@ import (
 	appsv1apply "k8s.io/client-go/applyconfigurations/apps/v1"
 	corev1apply "k8s.io/client-go/applyconfigurations/core/v1"
 	metav1apply "k8s.io/client-go/applyconfigurations/meta/v1"
+	networkingv1apply "k8s.io/client-go/applyconfigurations/networking/v1"
 	"k8s.io/utils/pointer"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -91,6 +94,14 @@ func (r *ServiceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		return result, err
 	}
 
+	if svc.Spec.External == operatorv1alpha1.ExternalIngress {
+		if err := r.reconcileIngress(ctx, svc); err != nil {
+			result, err2 := r.updateStatus(ctx, svc)
+			logger.Error(err2, "unable to update status")
+			return result, err
+		}
+	}
+
 	return r.updateStatus(ctx, svc)
 }
 
@@ -133,6 +144,16 @@ func (r *ServiceReconciler) reconcileDeployment(ctx context.Context, svc operato
 						WithImage(svc.Spec.Image).
 						WithImagePullPolicy(corev1.PullAlways).
 						WithArgs(svc.Spec.Args...).
+						WithEnv(
+							corev1apply.EnvVar().
+								WithName("SERVICE_USERNAME").
+								WithValueFrom(corev1apply.EnvVarSource().WithSecretKeyRef(
+									corev1apply.SecretKeySelector().WithName(svc.Spec.ServiceSecretRef).WithKey("username"))),
+							corev1apply.EnvVar().
+								WithName("SERVICE_PASSWORD").
+								WithValueFrom(corev1apply.EnvVarSource().WithSecretKeyRef(
+									corev1apply.SecretKeySelector().WithName(svc.Spec.ServiceSecretRef).WithKey("password"))),
+						).
 						WithPorts(corev1apply.ContainerPort().
 							WithProtocol(corev1.ProtocolTCP).
 							WithContainerPort(8080),
@@ -188,6 +209,11 @@ func (r *ServiceReconciler) reconcileService(ctx context.Context, svc operatorv1
 		return err
 	}
 
+	svcType := corev1.ServiceTypeClusterIP
+	if svc.Spec.External == operatorv1alpha1.ExternalLoadBalancer {
+		svcType = corev1.ServiceTypeLoadBalancer
+	}
+
 	service := corev1apply.Service(svc.Name, r.Config.Namespace).
 		WithLabels(map[string]string{
 			"app.kubernetes.io/name":       "mni-service",
@@ -201,7 +227,7 @@ func (r *ServiceReconciler) reconcileService(ctx context.Context, svc operatorv1
 				"app.kubernetes.io/instance":   svc.Name,
 				"app.kubernetes.io/created-by": "mni-operator",
 			}).
-			WithType(corev1.ServiceTypeClusterIP).
+			WithType(svcType).
 			WithPorts(corev1apply.ServicePort().
 				WithProtocol(corev1.ProtocolTCP).
 				WithPort(80).
@@ -242,6 +268,80 @@ func (r *ServiceReconciler) reconcileService(ctx context.Context, svc operatorv1
 	}
 
 	logger.Info("reconcile Service successfully", "name", svc.Name)
+	return nil
+}
+
+func (r *ServiceReconciler) reconcileIngress(ctx context.Context, svc operatorv1alpha1.Service) error {
+	logger := log.FromContext(ctx)
+
+	owner, err := controllerReference(svc, r.Scheme)
+	if err != nil {
+		return err
+	}
+
+	ingress := networkingv1apply.Ingress(svc.Name, r.Config.Namespace).
+		WithLabels(map[string]string{
+			"app.kubernetes.io/name":       "mni-service",
+			"app.kubernetes.io/instance":   svc.Name,
+			"app.kubernetes.io/created-by": "mni-operator",
+		}).
+		WithOwnerReferences(owner).
+		WithSpec(
+			networkingv1apply.IngressSpec().
+				WithRules(networkingv1apply.IngressRule().
+					WithHost("api." + r.Config.CustomDomain).
+					WithHTTP(networkingv1apply.HTTPIngressRuleValue().
+						WithPaths(networkingv1apply.HTTPIngressPath().
+							WithPath("/" + svc.Name).
+							WithPathType(networkingv1.PathTypePrefix).
+							WithBackend(networkingv1apply.IngressBackend().
+								WithService(networkingv1apply.IngressServiceBackend().
+									WithName(svc.Name).
+									WithPort(networkingv1apply.ServiceBackendPort().WithName("http")),
+								),
+							),
+						),
+					),
+				).
+				WithTLS(networkingv1apply.IngressTLS().
+					WithHosts("api." + r.Config.CustomDomain).
+					WithSecretName(svc.Name + "-tls"),
+				),
+		)
+
+	obj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(ingress)
+	if err != nil {
+		return err
+	}
+	patch := &unstructured.Unstructured{
+		Object: obj,
+	}
+
+	var current networkingv1.Ingress
+	err = r.Get(ctx, client.ObjectKey{Namespace: svc.Namespace, Name: svc.Name}, &current)
+	if err != nil && !errors.IsNotFound(err) {
+		return err
+	}
+
+	currApplyConfig, err := networkingv1apply.ExtractIngress(&current, "mni-operator")
+	if err != nil {
+		return err
+	}
+
+	if equality.Semantic.DeepEqual(ingress, currApplyConfig) {
+		return nil
+	}
+
+	err = r.Patch(ctx, patch, client.Apply, &client.PatchOptions{
+		FieldManager: "mni-operator",
+		Force:        pointer.Bool(true),
+	})
+	if err != nil {
+		logger.Error(err, "unable to create or update Ingress")
+		return err
+	}
+
+	logger.Info("reconcile Ingress successfully", "name", svc.Name)
 	return nil
 }
 
@@ -316,6 +416,40 @@ func (r *ServiceReconciler) updateStatus(ctx context.Context, svc operatorv1alph
 		result = ctrl.Result{Requeue: true}
 	} else {
 		svc.Status.Endpoints.Internal = "http://" + svc.Name + "." + r.Config.Namespace + ".svc"
+	}
+
+	if svc.Spec.External == operatorv1alpha1.ExternalLoadBalancer {
+		if service.Status.LoadBalancer.Ingress == nil || len(service.Status.LoadBalancer.Ingress) <= 0 {
+			meta.SetStatusCondition(&svc.Status.Conditions, metav1.Condition{
+				Type:    operatorv1alpha1.TypeServiceAvailable,
+				Status:  metav1.ConditionFalse,
+				Reason:  "Unavailable",
+				Message: "LoadBalancerIP is not assigned",
+			})
+		} else {
+			svc.Status.Endpoints.External = "http://" + service.Status.LoadBalancer.Ingress[0].IP
+		}
+	} else if svc.Spec.External == operatorv1alpha1.ExternalIngress {
+		var ingress networkingv1.Ingress
+		if err := r.Get(ctx, client.ObjectKey{Namespace: r.Config.Namespace, Name: svc.Name}, &ingress); err != nil {
+			if errors.IsNotFound(err) {
+				meta.SetStatusCondition(&svc.Status.Conditions, metav1.Condition{
+					Type:    operatorv1alpha1.TypeServiceDegraded,
+					Status:  metav1.ConditionTrue,
+					Reason:  "Reconciling",
+					Message: "Ingress not found",
+				})
+				meta.SetStatusCondition(&svc.Status.Conditions, metav1.Condition{
+					Type:   operatorv1alpha1.TypeServiceAvailable,
+					Status: metav1.ConditionFalse,
+					Reason: "Reconciling",
+				})
+			} else {
+				return ctrl.Result{}, err
+			}
+		} else {
+			svc.Status.Endpoints.External = "https://api." + r.Config.CustomDomain + "/" + svc.Name
+		}
 	}
 
 	err := r.Status().Update(ctx, &svc)

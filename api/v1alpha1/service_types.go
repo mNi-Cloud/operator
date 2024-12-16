@@ -39,6 +39,11 @@ type ServiceSpec struct {
 	// +optional
 	// +listType=atomic
 	Args []string `json:"args,omitempty"`
+
+	ServiceSecretRef string `json:"serviceSecretRef"`
+
+	// +kubebuilder:validation:Enum=Ingress;LoadBalancer
+	External string `json:"external"`
 }
 
 // ServiceStatus defines the observed state of Service.
@@ -55,6 +60,9 @@ type ServiceStatus struct {
 const (
 	TypeServiceAvailable = "Available"
 	TypeServiceDegraded  = "Degraded"
+
+	ExternalIngress      = "Ingress"
+	ExternalLoadBalancer = "LoadBalancer"
 )
 
 type ServiceEndpoint struct {
