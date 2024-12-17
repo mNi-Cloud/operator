@@ -297,7 +297,7 @@ func (r *ServiceReconciler) reconcileIngress(ctx context.Context, svc operatorv1
 							WithBackend(networkingv1apply.IngressBackend().
 								WithService(networkingv1apply.IngressServiceBackend().
 									WithName(svc.Name).
-									WithPort(networkingv1apply.ServiceBackendPort().WithName("http")),
+									WithPort(networkingv1apply.ServiceBackendPort().WithName("https")),
 								),
 							),
 						),
@@ -477,6 +477,7 @@ func (r *ServiceReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&operatorv1alpha1.Service{}).
 		Owns(&appsv1.Deployment{}).
 		Owns(&corev1.Service{}).
+		Owns(&networkingv1.Ingress{}).
 		Named("service").
 		Complete(r)
 }
