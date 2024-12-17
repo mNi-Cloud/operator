@@ -1,0 +1,4 @@
+resources:
+- https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.3/deploy/static/provider/cloud/deploy.yaml
+patches:
+- path: svc-patch.yaml

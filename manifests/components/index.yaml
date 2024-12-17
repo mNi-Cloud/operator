@@ -10,3 +10,5 @@ opa:
   - v0.67.1
 keycloak:
   - 22.1.2
+ingress-nginx:
+  - v1.11.3
