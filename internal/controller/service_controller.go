@@ -297,7 +297,7 @@ func (r *ServiceReconciler) reconcileIngress(ctx context.Context, svc operatorv1
 							WithBackend(networkingv1apply.IngressBackend().
 								WithService(networkingv1apply.IngressServiceBackend().
 									WithName(svc.Name).
-									WithPort(networkingv1apply.ServiceBackendPort().WithName("https")),
+									WithPort(networkingv1apply.ServiceBackendPort().WithNumber(80)),
 								),
 							),
 						),
