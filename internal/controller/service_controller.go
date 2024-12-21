@@ -285,6 +285,10 @@ func (r *ServiceReconciler) reconcileIngress(ctx context.Context, svc operatorv1
 			"app.kubernetes.io/instance":   svc.Name,
 			"app.kubernetes.io/created-by": "mni-operator",
 		}).
+		WithAnnotations(map[string]string{
+			"nginx.ingress.kubernetes.io/rewrite-target": "/api$1",
+			"nginx.ingress.kubernetes.io/use-regex":      "true",
+		}).
 		WithOwnerReferences(owner).
 		WithSpec(
 			networkingv1apply.IngressSpec().
@@ -292,8 +296,8 @@ func (r *ServiceReconciler) reconcileIngress(ctx context.Context, svc operatorv1
 					WithHost("api." + r.Config.CustomDomain).
 					WithHTTP(networkingv1apply.HTTPIngressRuleValue().
 						WithPaths(networkingv1apply.HTTPIngressPath().
-							WithPath("/" + svc.Name).
-							WithPathType(networkingv1.PathTypePrefix).
+							WithPath("/" + svc.Name + "(.*)").
+							WithPathType(networkingv1.PathTypeImplementationSpecific).
 							WithBackend(networkingv1apply.IngressBackend().
 								WithService(networkingv1apply.IngressServiceBackend().
 									WithName(svc.Name).
