@@ -1,11 +1,11 @@
 helmCharts:
-  - name: mni-mc
+  - name: mni-cloud
     repo: https://charts.mnicloud.jp
     version: 0.2.4
-    releaseName: mni-mc
+    releaseName: mni-cloud
     namespace: mni-cloud
-    values:
-      components:
+    valuesInline:
+      frontends:
         - name: mni-mc-main
           replicas: 1
           image: "ghcr.io/mni-cloud/mc-main:main"
@@ -85,7 +85,7 @@ helmCharts:
           containerPort: 3000
 
 resources:
-  - resources/namespace.yaml
-  - resources/ingress.yaml
+  - namespace.yaml
+  - ingress.yaml
 
 namespace: mni-cloud
