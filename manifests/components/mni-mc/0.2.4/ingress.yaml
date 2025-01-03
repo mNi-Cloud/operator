@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mni-mc-ingress
+spec:
+  rules:
+    - host: hostname.replacethis
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mni-mc-main
+                port:
+                  number: 3000
+  tls:
+    - hosts:
+        - hostname.replacethis
+      secretName: mni-mc-cert
