@@ -8,6 +8,8 @@ kubevirt:
   - v1.4.0
 opa:
   - v0.67.1
+mni-mc:
+  - 0.2.4
 keycloak:
   - 22.1.2
 ingress-nginx:

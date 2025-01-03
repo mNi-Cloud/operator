@@ -1,0 +1,91 @@
+helmCharts:
+  - name: mni-mc
+    repo: https://charts.mnicloud.jp
+    version: 0.2.4
+    releaseName: mni-mc
+    namespace: mni-cloud
+    values:
+      components:
+        - name: mni-mc-main
+          replicas: 1
+          image: "ghcr.io/mni-cloud/mc-main:main"
+          args: []
+          env: 
+            - name: "NEXTAUTH_URL"
+              value: "hostname.replacethis"
+            - name: "NEXTAUTH_SECRET"
+              value: "7034ddba3e52b29938082ef3aba9c5d258ad20fec8028b0a4323b7457d02b430"
+            - name: "NEXT_PUBLIC_API_DOMAIN"
+              value: "mni-mc-api.mni-cloud.svc"
+            - name: "NEXT_PUBLIC_DASHBOARD_DOMAIN"
+              value: "mni-mc-dashboard.mni-cloud.svc"
+            - name: "NEXT_PUBLIC_VPC_DOMAIN"
+              value: "mni-mc-vpc.mni-cloud.svc"
+            - name: "NEXT_PUBLIC_VM_DOMAIN"
+              value: "mni-mc-vm.mni-cloud.svc"
+            - name: "NEXT_PUBLIC_BS_DOMAIN"
+              value: "mni-mc-bs.mni-cloud.svc"
+            - name: "NEXT_PUBLIC_CTR_DOMAIN"
+              value: "mni-mc-ctr.mni-cloud.svc"
+          containerPort: 3000
+
+        - name: mni-mc-api
+          replicas: 1
+          image: "ghcr.io/mni-cloud/mc-api:main"
+          args: []
+          env: 
+            - name: "NEXT_PUBLIC_MNI_VPC_ENDPOINT"
+              value: "http://mni-vpc.mni-cloud.svc/vpc/v1alpha1"
+            - name: "NEXT_PUBLIC_MNI_VM_ENDPOINT"
+              value: "http://mni-mc-vm.mni-cloud.svc/vm/v1alpha1"
+            - name: "NEXT_PUBLIC_MNI_CTR_ENDPOINT"
+              value: "http://mni-mc-ctr.mni-cloud.svc/ctr/v1alpha1"
+            - name: "NEXT_PUBLIC_MNI_BS_ENDPOINT"
+              value: "http://mni-mc-bs.mni-cloud.svc/bs/v1alpha1"
+            - name: "NEXTAUTH_URL"
+              value: "hostname.replacethis"
+            - name: "NEXTAUTH_SECRET"
+              value: "7034ddba3e52b29938082ef3aba9c5d258ad20fec8028b0a4323b7457d02b430"
+            - name: "KEYCLOAK_ID"
+              value: "mni-mc"
+            - name: "KEYCLOAK_SECRET"
+              value: "t9h0KEs1yQK4UZcoKSnUg2GYkpriLKU1"
+            - name: "KEYCLOAK_ISSUER"
+              value: "keycloakurl.replacethis"
+          containerPort: 3000
+
+        - name: mni-mc-dashboard
+          replicas: 1
+          image: "ghcr.io/mni-cloud/mc-dashboard:main"
+          args: []
+          containerPort: 3000
+
+        - name: mni-mc-vpc
+          replicas: 1
+          image: "ghcr.io/mni-cloud/mc-vpc:main"
+          args: []
+          containerPort: 3000
+
+        - name: mni-mc-vm
+          replicas: 1
+          image: "ghcr.io/mni-cloud/mc-vm:main"
+          args: []
+          containerPort: 3000
+
+        - name: mni-mc-bs
+          replicas: 1
+          image: "ghcr.io/mni-cloud/mc-bs:main"
+          args: []
+          containerPort: 3000
+
+        - name: mni-mc-ctr
+          replicas: 1
+          image: "ghcr.io/mni-cloud/mc-ctr:main"
+          args: []
+          containerPort: 3000
+
+resources:
+  - resources/namespace.yaml
+  - resources/ingress.yaml
+
+namespace: mni-cloud
