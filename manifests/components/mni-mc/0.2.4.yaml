@@ -270,7 +270,7 @@ spec:
       - args: []
         env:
         - name: NEXTAUTH_URL
-          value: hostname.replacethis
+          value: url.replacethis
         - name: NEXTAUTH_SECRET
           value: 7034ddba3e52b29938082ef3aba9c5d258ad20fec8028b0a4323b7457d02b430
         - name: NEXT_PUBLIC_API_DOMAIN
