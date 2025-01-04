@@ -43,7 +43,7 @@ helmCharts:
             - name: "NEXT_PUBLIC_MNI_BS_ENDPOINT"
               value: "http://mni-mc-bs.mni-cloud.svc/bs/v1alpha1"
             - name: "NEXTAUTH_URL"
-              value: "hostname.replacethis"
+              value: "url.replacethis"
             - name: "NEXTAUTH_SECRET"
               value: "secret.replacethis"
             - name: "KEYCLOAK_ID"
