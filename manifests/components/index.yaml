@@ -1,14 +1,16 @@
 cert-manager:
   - v1.15.3
-contour:
-  - v19.0.2
-cdi:
-  - v1.59.0
-kubevirt:
-  - v1.4.0
 opa:
   - v0.67.1
-keycloak:
-  - 22.1.2
+cdi:
+  - v1.59.0
 ingress-nginx:
   - v1.11.3
+contour:
+  - v19.0.2
+mni-mc:
+  - 0.2.4
+keycloak:
+  - 22.1.2
+kubevirt:
+  - v1.4.0
