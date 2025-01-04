@@ -16,17 +16,17 @@ helmCharts:
             - name: "NEXTAUTH_SECRET"
               value: "secret.replacethis"
             - name: "NEXT_PUBLIC_API_DOMAIN"
-              value: "mni-mc-api.mni-cloud.svc"
+              value: "mni-mc-api"
             - name: "NEXT_PUBLIC_DASHBOARD_DOMAIN"
-              value: "mni-mc-dashboard.mni-cloud.svc"
+              value: "mni-mc-dashboard"
             - name: "NEXT_PUBLIC_VPC_DOMAIN"
-              value: "mni-mc-vpc.mni-cloud.svc"
+              value: "mni-mc-vpc"
             - name: "NEXT_PUBLIC_VM_DOMAIN"
-              value: "mni-mc-vm.mni-cloud.svc"
+              value: "mni-mc-vm"
             - name: "NEXT_PUBLIC_BS_DOMAIN"
-              value: "mni-mc-bs.mni-cloud.svc"
+              value: "mni-mc-bs"
             - name: "NEXT_PUBLIC_CTR_DOMAIN"
-              value: "mni-mc-ctr.mni-cloud.svc"
+              value: "mni-mc-ctr"
           containerPort: 3000
 
         - name: mni-mc-api
