@@ -85,7 +85,6 @@ helmCharts:
           containerPort: 3000
 
 resources:
-  - namespace.yaml
   - ingress.yaml
 
 namespace: mni-cloud
