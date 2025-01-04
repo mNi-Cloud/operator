@@ -286,7 +286,8 @@ func (r *ServiceReconciler) reconcileIngress(ctx context.Context, svc operatorv1
 			"app.kubernetes.io/created-by": "mni-operator",
 		}).
 		WithAnnotations(map[string]string{
-			"ingress.kubernetes.io/rewrite-target": "/",
+			"ingress.kubernetes.io/rewrite-target":       "/",
+			"nginx.ingress.kubernetes.io/rewrite-target": "/",
 		}).
 		WithOwnerReferences(owner).
 		WithSpec(
