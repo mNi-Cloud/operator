@@ -35,13 +35,13 @@ helmCharts:
           args: []
           env: 
             - name: "NEXT_PUBLIC_MNI_VPC_ENDPOINT"
-              value: "http://mni-vpc.mni-cloud.svc/vpc/v1alpha1"
+              value: "http://vpc.mni-cloud.svc/v1alpha1"
             - name: "NEXT_PUBLIC_MNI_VM_ENDPOINT"
-              value: "http://mni-mc-vm.mni-cloud.svc/vm/v1alpha1"
+              value: "http://vm.mni-cloud.svc/v1alpha1"
             - name: "NEXT_PUBLIC_MNI_CTR_ENDPOINT"
-              value: "http://mni-mc-ctr.mni-cloud.svc/ctr/v1alpha1"
+              value: "http://ctr.mni-cloud.svc/v1alpha1"
             - name: "NEXT_PUBLIC_MNI_BS_ENDPOINT"
-              value: "http://mni-mc-bs.mni-cloud.svc/bs/v1alpha1"
+              value: "http://bs.mni-cloud.svc/v1alpha1"
             - name: "NEXTAUTH_URL"
               value: "url.replacethis"
             - name: "NEXTAUTH_SECRET"

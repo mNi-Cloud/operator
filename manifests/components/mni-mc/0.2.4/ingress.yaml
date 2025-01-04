@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: mni-mc-ingress
+  name: mni-mc
 spec:
   rules:
     - host: hostname.replacethis
