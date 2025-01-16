@@ -83,6 +83,15 @@ helmCharts:
           image: "ghcr.io/mni-cloud/mc-ctr:main"
           args: []
           containerPort: 3000
+        
+        - name: mni-mc-bap
+          replicas: 1
+          image: "ghcr.io/mni-cloud/mc-bap:main"
+          args: []
+          env:
+            - name: "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"
+              value: "stripepublishablekey.replacethis"
+          containerPort: 3000
 
 resources:
   - ingress.yaml

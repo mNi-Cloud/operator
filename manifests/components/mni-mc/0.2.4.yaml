@@ -42,6 +42,19 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: mni-mc-bap
+  namespace: mni-cloud
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: mni-mc-bap
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: mni-mc-bs
   namespace: mni-cloud
 spec:
@@ -158,6 +171,36 @@ spec:
         image: ghcr.io/mni-cloud/mc-api:main
         imagePullPolicy: Always
         name: mni-mc-api
+        ports:
+        - containerPort: 3000
+      imagePullSecrets:
+      - name: ""
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mni-mc-bap
+  name: mni-mc-bap
+  namespace: mni-cloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mni-mc-bap
+  template:
+    metadata:
+      labels:
+        app: mni-mc-bap
+    spec:
+      containers:
+      - args: []
+        env:
+        - name: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+          value: stripepublishablekey.replacethis
+        image: ghcr.io/mni-cloud/mc-bap:main
+        imagePullPolicy: Always
+        name: mni-mc-bap
         ports:
         - containerPort: 3000
       imagePullSecrets:
