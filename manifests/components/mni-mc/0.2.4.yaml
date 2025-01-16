@@ -158,6 +158,8 @@ spec:
           value: http://ctr.mni-cloud.svc/v1alpha1
         - name: NEXT_PUBLIC_MNI_BS_ENDPOINT
           value: http://bs.mni-cloud.svc/v1alpha1
+        - name: NEXT_PUBLIC_MNI_BAP_ENDPOINT
+          value: http://tnt.mni-cloud.svc/v1alpha1
         - name: NEXTAUTH_URL
           value: url.replacethis
         - name: NEXTAUTH_SECRET
@@ -323,6 +325,8 @@ spec:
           value: mni-mc-bs
         - name: NEXT_PUBLIC_CTR_DOMAIN
           value: mni-mc-ctr
+        - name: NEXT_PUBLIC_BAP_DOMAIN
+          value: mni-mc-bap
         image: ghcr.io/mni-cloud/mc-main:main
         imagePullPolicy: Always
         name: mni-mc-main
